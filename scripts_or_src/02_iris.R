@@ -1,11 +1,21 @@
 library(tidyverse)
-library(ggplot2)
-library(ggthemes)
-library(ggpubr)
-library(ggExtra)
-# plot a histogram from iris dataset
-ggplot(iris, aes(x = Sepal.Length)) +
-  geom_histogram(binwidth = 0.2, fill = "blue", color = "black") +
-  theme_minimal() +
-  labs(title = "Histogram of Sepal Length", x = "Sepal Length", y = "Frequency") +
-  theme(plot.title = element_text(hjust = 0.5))
+library(rvest)
+
+
+scraped_strings <- read_html("https://www.nzz.ch/") %>% 
+  html_elements(css = "a") %>%
+  html_attr("href")
+
+scraped_strings <- str_c("https://www.nzz.ch", scraped_strings[10:12])
+
+total_scraped_text <- vector("list", length = length(scraped_strings))
+
+for (i in 1:length(scraped_strings)) {
+  
+  total_scraped_text[[i]] <- read_html(scraped_strings[i]) %>%
+  html_elements(css = "p") %>%
+  html_text()
+  
+}
+
+print(total_scraped_text)
